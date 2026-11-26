@@ -1,7 +1,8 @@
 export async function onRequest(context) {
+  const username = context.env.SITE_USERNAME;
   const password = context.env.SITE_PASSWORD;
 
-  if (!password) {
+  if (!username || !password) {
     return new Response("Access unavailable.", {
       status: 503,
       headers: { "Cache-Control": "no-store" }
@@ -17,12 +18,12 @@ export async function onRequest(context) {
       const separator = credentials.indexOf(":");
 
       if (separator >= 0) {
-        const username = credentials.slice(0, separator);
-        const supplied = credentials.slice(separator + 1);
+        const suppliedUsername = credentials.slice(0, separator);
+        const suppliedPassword = credentials.slice(separator + 1);
 
         authorized =
-          username === "practitioner" &&
-          supplied === password;
+          suppliedUsername === username &&
+          suppliedPassword === password;
       }
     } catch {
       authorized = false;
